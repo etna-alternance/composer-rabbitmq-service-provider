@@ -56,3 +56,8 @@ Fonctionnalité: $app["amqp.exchanges"]
         Et $app["amqp.exchanges"]["test2"]->isPassive() == false
         Et $app["amqp.exchanges"]["test2"]->isDurable() == true
         Et $app["amqp.exchanges"]["test2"]->isAutoDelete() == false
+
+    Scénario: $amqp["amqp.exchanges"]["test1"]->send()
+        Etant donnée que je bind une file sur l'exchange "test1"
+        Quand j'envoie un message "coucou" dans l'exchange "test1"
+        Alors il doit y avoir un message "coucou" dans la file

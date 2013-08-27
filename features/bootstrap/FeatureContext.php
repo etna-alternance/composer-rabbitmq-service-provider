@@ -36,7 +36,7 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @BeforeSuite
+     * @BeforeSuit
      */
     static public function createVhosts()
     {
@@ -47,7 +47,7 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @AfterSuite
+     * @AfterSuit
      */
     static public function deleteVhosts()
     {
@@ -119,5 +119,31 @@ class FeatureContext extends BehatContext
             $value = $this->app["amqp.{$type}"][$name]->$method();
             throw new Exception("\$app['amqp.{$type}'['{$name}']]->{$method}() = " . var_export($value, true));
         }
+    }
+
+    /**
+     * @Given /^que je bind une file sur l\'exchange "([^"]*)"$/
+     */
+    public function queJeBindUneFileSurLExchange($exchange)
+    {
+        $channel = $this->app["amqp.exchanges"][$exchange]->getChannel();
+        $this->tmp_queue = $channel->queue_declare()[0];
+        $channel->queue_bind($this->tmp_queue, $exchange);
+    }
+
+    /**
+     * @Given /^j\'envoie un message "(\w+)" dans l\'exchange "(\w+)"$/
+     */
+    public function jEnvoieUnMessage($message, $exchange)
+    {
+        $this->app["amqp.exchanges"][$exchange]->send($message);
+    }
+
+    /**
+     * @Given /^il doit y avoir un message "([^"]*)" dans la file$/
+     */
+    public function ilDoitYAvoirUnMessageDansLaFile($arg1)
+    {
+        throw new PendingException();
     }
 }

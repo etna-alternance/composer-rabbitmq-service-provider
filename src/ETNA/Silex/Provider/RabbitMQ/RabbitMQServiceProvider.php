@@ -17,30 +17,55 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
 
     public function register(Application $app)
     {
-        $app["rabbitmq"] = $app->share(
-            function ($app) {
-                if (!isset($app["rabbitmq.host"])) {
-                    throw new \Exception('Undefined $app["rabbitmq.host"]');
+        $app["amqp.chan"] = $app->share(
+            function (Application $app) {
+                return $app["amqp.chans"]["default"];
+            }
+        );
+
+        $app["amqp.chans"] = $app->share(
+            function (Application $app) {
+                $chans = new \Pimple();
+
+                foreach ($app['amqp.chans.options'] as $name => $options) {
+                    $chans[$name] = $app->share(
+                        function () use ($app, $name, $options) {
+                            $connection = new AMQPConnection(
+                                $options["host"],
+                                $options["port"],
+                                $options["user"],
+                                $options["password"],
+                                $options["vhost"]
+                            );
+                            return $connection->channel();
+                        }
+                    );
                 }
-                if (!isset($app["rabbitmq.port"])) {
-                    throw new \Exception('Undefined $app["rabbitmq.port"]');
-                }
-                if (!isset($app["rabbitmq.user"])) {
-                    throw new \Exception('Undefined $app["rabbitmq.user"]');
-                }
-                if (!isset($app["rabbitmq.password"])) {
-                    throw new \Exception('Undefined $app["rabbitmq.password"]');
-                }
-                if (!isset($app["rabbitmq.vhost"])) {
-                    throw new \Exception('Undefined $app["rabbitmq.vhost"]');
-                }
-                return new AMQPConnection(
-                    $app["rabbitmq.host"],
-                    $app["rabbitmq.port"],
-                    $app["rabbitmq.user"],
-                    $app["rabbitmq.password"],
-                    $app["rabbitmq.vhost"]
+
+                return $chans;
+            }
+        );
+
+        $app["amqp.exchanges"] = $app->share(
+            function (Application $app) {
+                $exchanges = new \Pimple();
+
+                $exchanges[""] = $app->share(
+                    function () use ($app) {
+                        return new Exchange("", $app["amqp.chan"], [    ]);
+                    }
                 );
+
+                foreach ($app['amqp.exchanges.options'] as $name => $options) {
+                    $exchanges[$name] = $app->share(
+                        function () use ($app, $name, $options) {
+                            $channel = (isset($options["channel"])) ? $options["channel"] : "default";
+                            return new Exchange($name, $app["amqp.chans"][$channel], $options);
+                        }
+                    );
+                }
+
+                return $exchanges;
             }
         );
     }

@@ -29,7 +29,8 @@ class Queue
         );
         
         if ($exchange->getName()) {
-            $channel->queue_bind($name, $exchange->getName());
+            $routing_key = $exchange->getType() == "fanout" ? null : $name;
+            $channel->queue_bind($name, $exchange->getName(), $routing_key);
         }
     }
 
@@ -63,8 +64,9 @@ class Queue
         return $this->auto_delete;
     }
 
-    public function send($message, $routing_key = "", $mandatory = false, $immediate = false, $ticket = null)
+    public function send($message, $routing_key = null, $mandatory = false, $immediate = false, $ticket = null)
     {
+        $routing_key = $routing_key !== null ? $routing_key : $this->name;
         $message = new AMQPMessage(json_encode($message), ["Content-Type" => "application/json"]);
         $this->channel->basic_publish($message, $this->exchange->getName(), $routing_key, $mandatory, $immediate, $ticket);
     }

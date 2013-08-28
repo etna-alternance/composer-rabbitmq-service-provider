@@ -24,14 +24,14 @@ Fonctionnalité: $app["amqp.queues"]
                 }
             },
             "amqp.exchanges.options": {
-                "test1": {
+                "exchange1": {
                     "channel": "default",
                     "type": "direct",
                     "passive": false,
                     "durable": false,
                     "auto_delete": true
                 },
-                "test2": {
+                "exchange2": {
                     "channel": "named",
                     "type": "fanout",
                     "passive": false,
@@ -41,14 +41,14 @@ Fonctionnalité: $app["amqp.queues"]
             },
             "amqp.queues.options": {
                 "test1": {
-                    "exchange": "test1",
+                    "exchange": "exchange1",
                     "passive": false,
                     "durable": false,
                     "exclusive": false,
                     "auto_delete": true
                 },
                 "test2": {
-                    "exchange": "test1",
+                    "exchange": "exchange1",
                     "passive": false,
                     "durable": true,
                     "exclusive": false,
@@ -70,6 +70,6 @@ Fonctionnalité: $app["amqp.queues"]
         | test1 | false   | false   | false     | true        |
         | test2 | false   | true    | false     | false       |
 
-    Scénario: $amqp["amqp.queues"]["test1"]->send()
-        Quand j'envoie un message "coucou" dans la file "test1"
-        Alors il doit y avoir un message "coucou" dans la file "test1"
+    Scénario: $amqp["amqp.queues"]["test2"]->send()
+        Quand j'envoie un message "coucou" dans la file "test2"
+        Alors il doit y avoir un message "coucou" dans la file

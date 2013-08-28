@@ -142,11 +142,21 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @Given /^il doit y avoir un message "([^"]*)" dans la file$/
+     * @Given /^j\'envoie un message "(\w+)" dans la file "([^"]*)"$/
      */
-    public function ilDoitYAvoirUnMessageDansLaFile($message)
+    public function jEnvoieUnMessageDansLaFile($message, $queue)
     {
-        $this->channel->basic_consume($this->tmp_queue, "behat", false, false, false, false, function ($msg) use ($message) {
+        $this->channel = $this->app["amqp.queues"][$queue]->getChannel();
+        $this->app["amqp.queues"][$queue]->send($message);
+    }
+
+    /**
+     * @Given /^il doit y avoir un message "([^"]*)" dans la file( "(\w+)")?$/
+     */
+    public function ilDoitYAvoirUnMessageDansLaFile($message, $queue = null)
+    {
+        $queue = $queue ?: $this->tmp_queue;
+        $this->channel->basic_consume($queue, "behat", false, false, false, false, function ($msg) use ($message) {
             $msg->delivery_info['channel']->basic_cancel($msg->delivery_info['consumer_tag']);
 
             if (json_decode($msg->body) != $message) {

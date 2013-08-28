@@ -10,23 +10,62 @@ use PhpAmqpLib\Channel\AMQPChannel;
  */
 class Queue
 {
-    function __construct($name, Exchange $exchange, AMQPChannel $channel, $options)
+    public function __construct($name, Exchange $exchange, AMQPChannel $channel, $options)
     {
-        $this->name    = $name;
-        $this->channel = $channel;
-        $this->options = $options;
-        $channel->exchange_declare(
+        $this->name        = $name;
+        $this->exchange    = $exchange;
+        $this->channel     = $channel;
+        $this->passive     = $options["passive"];
+        $this->durable     = $options["durable"];
+        $this->exclusive   = $options["exclusive"];
+        $this->auto_delete = $options["auto_delete"];
+
+        $channel->queue_declare(
             $name,
-            $options["type"],
-            $options["passive"],
-            $options["durable"],
-            $options["auto_delete"]
+            $this->passive,
+            $this->durable,
+            $this->exclusive,
+            $this->auto_delete
         );
+        
+        if ($exchange->getName()) {
+            $channel->queue_bind($name, $exchange->getName());
+        }
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+    
+    public function getChannel()
+    {
+        return $this->channel;
+    }
+    
+    public function isPassive()
+    {
+        return $this->passive;
+    }
+    
+    public function isDurable()
+    {
+        return $this->durable;
+    }
+    
+    public function isExclusive()
+    {
+        return $this->exclusive;
+    }
+    
+    public function isAutoDelete()
+    {
+        return $this->auto_delete;
     }
 
     public function send($message, $routing_key = "", $mandatory = false, $immediate = false, $ticket = null)
     {
         $message = new AMQPMessage(json_encode($message), ["Content-Type" => "application/json"]);
-        $this->channel->basic_publish($message, $this->name, $routing_key, $mandatory, $immediate, $ticket);
+        $this->channel->basic_publish($message, $this->exchange->getName(), $routing_key, $mandatory, $immediate, $ticket);
     }
 }

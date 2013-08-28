@@ -35,23 +35,25 @@ class FeatureContext extends BehatContext
         // Initialize your context here
     }
 
+    static private $vhosts = ["/test-behat", "/test-behat-named"];
+
     /**
-     * @BeforeSuit
+     * @BeforeSuite
      */
     static public function createVhosts()
     {
-        foreach (["/test-behat", "/test-behat-named"] as $vhost) {
+        foreach (self::$vhosts as $vhost) {
             passthru("rabbitmqctl add_vhost {$vhost} > /dev/null");
             passthru("rabbitmqctl set_permissions -p {$vhost} guest '.*' '.*' '.*' > /dev/null");
         }
     }
 
     /**
-     * @AfterSuit
+     * @AfterSuite
      */
     static public function deleteVhosts()
     {
-        foreach (["/test-behat", "/test-behat-named"] as $vhost) {
+        foreach (self::$vhosts as $vhost) {
             passthru("rabbitmqctl delete_vhost {$vhost} > /dev/null");
         }
     }

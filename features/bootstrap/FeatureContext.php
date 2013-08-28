@@ -142,9 +142,19 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @Given /^il doit y avoir un message "([^"]*)" dans la file$/
+     * @Given /^j\'envoie un message "(\w+)" dans la file "([^"]*)"$/
      */
-    public function ilDoitYAvoirUnMessageDansLaFile($message)
+    public function jEnvoieUnMessageDansLaFile($message, $queue)
+    {
+        $this->channel = $this->app["amqp.queues"][$queue]->getChannel();
+        $this->tmp_queue = $queue;
+        $this->app["amqp.queues"][$queue]->send($message);
+    }
+
+    /**
+     * @Given /^il doit y avoir un message "([^"]*)" dans la file( "(\w+)")?$/
+     */
+    public function ilDoitYAvoirUnMessageDansLaFile($message, $queue = null)
     {
         $this->channel->basic_consume($this->tmp_queue, "behat", false, false, false, false, function ($msg) use ($message) {
             $msg->delivery_info['channel']->basic_cancel($msg->delivery_info['consumer_tag']);
@@ -154,5 +164,27 @@ class FeatureContext extends BehatContext
             }
         });
         $this->channel->wait();
+    }
+
+    /**
+     * @Given /^je fais un listen ma callback doit être appelé (\d+) fois$/
+     */
+    public function jeFaisUnListen($nb)
+    {
+        $this->app["amqp.queues"][$this->tmp_queue]->send("__QUIT__");
+        $nb++;
+
+        $count = 0;
+        $last_message = null;
+        $this->app["amqp.queues"][$this->tmp_queue]->listen(function ($msg) use ($count, &$last_message) {
+            $count++;
+            $last_message = json_decode($msg->body);
+        });
+        while ($nb--) {
+            $this->channel->wait();
+        }
+        if ($last_message != "__QUIT__") {
+            throw new Exception("Il y a trop de message");
+        }
     }
 }

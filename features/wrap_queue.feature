@@ -73,3 +73,9 @@ Fonctionnalité: $app["amqp.queues"]
     Scénario: $amqp["amqp.queues"]["test2"]->send()
         Quand j'envoie un message "coucou" dans la file "test2"
         Alors il doit y avoir un message "coucou" dans la file
+
+    Scénario: $amqp["amqp.queues"]["test2"]->listen()
+        Lorsque j'envoie un message "coucou" dans la file "test2"
+        Et j'envoie un message "coucou" dans la file "test2"
+        Et j'envoie un message "coucou" dans la file "test2"
+        Quand je fais un listen ma callback doit être appelé 3 fois

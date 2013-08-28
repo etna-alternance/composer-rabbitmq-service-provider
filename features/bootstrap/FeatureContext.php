@@ -165,4 +165,26 @@ class FeatureContext extends BehatContext
         });
         $this->channel->wait();
     }
+
+    /**
+     * @Given /^je fais un listen ma callback doit être appelé (\d+) fois$/
+     */
+    public function jeFaisUnListen($nb)
+    {
+        $this->app["amqp.queues"][$this->tmp_queue]->send("__QUIT__");
+        $nb++;
+
+        $count = 0;
+        $last_message = null;
+        $this->app["amqp.queues"][$this->tmp_queue]->listen(function ($msg) use ($count, &$last_message) {
+            $count++;
+            $last_message = json_decode($msg->body);
+        });
+        while ($nb--) {
+            $this->channel->wait();
+        }
+        if ($last_message != "__QUIT__") {
+            throw new Exception("Il y a trop de message");
+        }
+    }
 }

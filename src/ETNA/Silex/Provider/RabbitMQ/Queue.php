@@ -70,4 +70,14 @@ class Queue
         $message = new AMQPMessage(json_encode($message), ["Content-Type" => "application/json"]);
         $this->channel->basic_publish($message, $this->exchange->getName(), $routing_key, $mandatory, $immediate, $ticket);
     }
+    
+    public function listen(\Closure $callback, $no_local = false, $no_ack = false, $exclusive = false, $nowait = false)
+    {
+        $chars = preg_split("//", "QWERTYUIOPLKJHGFDSAZXCVBNMqwertyuioplkjhgfdsazxcvbnm1234567890");
+        shuffle($chars);
+        $chars = array_slice($chars, 12);
+        $consumer_tag = implode("", $chars);
+        $consumer_tag = md5("{$this->name}/{$consumer_tag}");
+        $this->channel->basic_consume($this->name, $consumer_tag, $no_local, $no_ack, $exclusive, $nowait, $callback);
+    }
 }

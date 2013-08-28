@@ -126,9 +126,9 @@ class FeatureContext extends BehatContext
      */
     public function queJeBindUneFileSurLExchange($exchange)
     {
-        $channel = $this->app["amqp.exchanges"][$exchange]->getChannel();
-        $this->tmp_queue = $channel->queue_declare()[0];
-        $channel->queue_bind($this->tmp_queue, $exchange);
+        $this->channel = $this->app["amqp.exchanges"][$exchange]->getChannel();
+        $this->tmp_queue = $this->channel->queue_declare()[0];
+        $this->channel->queue_bind($this->tmp_queue, $exchange);
     }
 
     /**
@@ -142,8 +142,15 @@ class FeatureContext extends BehatContext
     /**
      * @Given /^il doit y avoir un message "([^"]*)" dans la file$/
      */
-    public function ilDoitYAvoirUnMessageDansLaFile($arg1)
+    public function ilDoitYAvoirUnMessageDansLaFile($message)
     {
-        throw new PendingException();
+        $this->channel->basic_consume($this->tmp_queue, "behat", false, false, false, false, function ($msg) use ($message) {
+            $msg->delivery_info['channel']->basic_cancel($msg->delivery_info['consumer_tag']);
+
+            if (json_decode($msg->body) != $message) {
+                throw new Exception("{$msg->body} != {$message}");
+            }
+        });
+        $this->channel->wait();
     }
 }

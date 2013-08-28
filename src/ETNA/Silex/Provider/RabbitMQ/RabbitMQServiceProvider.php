@@ -37,7 +37,12 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
                                 $options["password"],
                                 $options["vhost"]
                             );
-                            return $connection->channel();
+                            $channel = $connection->channel();
+                            register_shutdown_function(function ($channel, $connection) use ($name) {
+                                $channel->close();
+                                $connection->close();
+                            }, $channel, $connection);
+                            return $channel;
                         }
                     );
                 }

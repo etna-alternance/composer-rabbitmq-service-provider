@@ -42,20 +42,18 @@ Fonctionnalité: $app["amqp.exchanges"]
         }
         """
 
-    Scénario: $app["amqp.exchanges"]["test1"] est un object de type Exchange
-        Alors $app["amqp.exchanges"]["test1"] est du type ETNA\Silex\Provider\RabbitMQ\Exchange
-        Et $app["amqp.exchanges"]["test1"]->getType() == "direct"
-        Et $app["amqp.exchanges"]["test1"]->isPassive() == false
-        Et $app["amqp.exchanges"]["test1"]->isDurable() == false
-        Et $app["amqp.exchanges"]["test1"]->isAutoDelete() == true
-        
+    Plan du Scénario: $app["amqp.exchanges"]["$name"] est un object de type Exchange
+        Alors $app["amqp.exchanges"]["<name>"] est du type ETNA\Silex\Provider\RabbitMQ\Exchange
+        Et $app["amqp.exchanges"]["<name>"]->getType() == "<type>"
+        Et $app["amqp.exchanges"]["<name>"]->isPassive() == <passive>
+        Et $app["amqp.exchanges"]["<name>"]->isDurable() == <durable>
+        Et $app["amqp.exchanges"]["<name>"]->isAutoDelete() == <auto_delete>
 
-    Scénario: $app["amqp.exchanges"]["test2"] est un object de type Exchange
-        Alors $app["amqp.exchanges"]["test2"] est du type ETNA\Silex\Provider\RabbitMQ\Exchange
-        Et $app["amqp.exchanges"]["test2"]->getType() == "fanout"
-        Et $app["amqp.exchanges"]["test2"]->isPassive() == false
-        Et $app["amqp.exchanges"]["test2"]->isDurable() == true
-        Et $app["amqp.exchanges"]["test2"]->isAutoDelete() == false
+    Exemples:
+        | name    | type   | passive | durable | auto_delete |
+        | default | direct | false   | true    | false       |
+        | test1   | direct | false   | false   | true        |
+        | test2   | fanout | false   | true    | false       |
 
     Scénario: $amqp["amqp.exchanges"]["test1"]->send()
         Etant donnée que je bind une file sur l'exchange "test1"

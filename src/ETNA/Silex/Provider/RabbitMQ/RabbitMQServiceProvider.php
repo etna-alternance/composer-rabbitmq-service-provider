@@ -2,8 +2,6 @@
 
 namespace ETNA\Silex\Provider\RabbitMQ;
 
-use PhpAmqpLib\Connection\AMQPConnection;
-use PhpAmqpLib\Connection\AMQPSSLConnection;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 
@@ -31,24 +29,23 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
                 foreach ($app['amqp.chans.options'] as $name => $options) {
                     $chans[$name] = $app->share(
                         function () use ($app, $name, $options) {
-                            if (isset($options["ssl"]) && $options["ssl"] === true)
-                            {
-                                $connection = new AMQPSSLConnection(
-                                    $options["host"],
-                                    $options["port"],
-                                    $options["user"],
-                                    $options["password"],
-                                    $options["vhost"]
-                                );
+                            if (isset($options["ssl"]) && $options["ssl"] === true) {
+                                $amqp_class = 'PhpAmqpLib\Connection\AMQPSSLConnection';
                             } else {
-                                $connection = new AMQPConnection(
-                                    $options["host"],
-                                    $options["port"],
-                                    $options["user"],
-                                    $options["password"],
-                                    $options["vhost"]
-                                );
+                                $amqp_class = 'PhpAmqpLib\Connection\AMQPConnection';
                             }
+
+                            $amqp_args = [
+                                $options["host"],
+                                $options["port"],
+                                $options["user"],
+                                $options["password"],
+                                $options["vhost"]
+                            ];
+
+                            $reflection = new \ReflectionClass($amqp_class);
+                            $connection = $reflection->newInstanceArgs($amqp_args);
+
                             $channel = $connection->channel();
                             register_shutdown_function(function ($channel, $connection) use ($name) {
                                 $channel->close();

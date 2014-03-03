@@ -31,9 +31,9 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
                 foreach ($app['amqp.chans.options'] as $name => $options) {
                     $chans[$name] = $app->share(
                         function () use ($app, $name, $options) {
-                            if (getenv('APPLICATION_ENV') == "local.testing")
+                            if (isset($options["ssl"]) && $options["ssl"] === true)
                             {
-                                $connection = new AMQPConnection(
+                                $connection = new AMQPSSLConnection(
                                     $options["host"],
                                     $options["port"],
                                     $options["user"],
@@ -41,7 +41,7 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
                                     $options["vhost"]
                                 );
                             } else {
-                                $connection = new AMQPSSLConnection(
+                                $connection = new AMQPConnection(
                                     $options["host"],
                                     $options["port"],
                                     $options["user"],

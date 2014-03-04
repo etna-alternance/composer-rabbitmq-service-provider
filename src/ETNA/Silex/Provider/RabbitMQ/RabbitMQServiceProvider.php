@@ -42,7 +42,6 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
                                 $options["password"],
                                 $options["vhost"],
                                 [ 'verify_peer' => false ]
-
                             ];
 
                             $reflection = new \ReflectionClass($amqp_class);

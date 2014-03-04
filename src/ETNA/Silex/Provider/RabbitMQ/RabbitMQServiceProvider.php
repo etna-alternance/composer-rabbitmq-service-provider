@@ -6,7 +6,7 @@ use Silex\Application;
 use Silex\ServiceProviderInterface;
 
 /**
- * 
+ *
  */
 class RabbitMQServiceProvider implements ServiceProviderInterface
 {
@@ -40,7 +40,8 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
                                 $options["port"],
                                 $options["user"],
                                 $options["password"],
-                                $options["vhost"]
+                                $options["vhost"],
+                                [ 'verify_peer' => false ]
                             ];
 
                             $reflection = new \ReflectionClass($amqp_class);

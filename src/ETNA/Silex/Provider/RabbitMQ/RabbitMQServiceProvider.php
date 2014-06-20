@@ -12,6 +12,8 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
 {
     public function boot(Application $app)
     {
+        isset($app['amqp.exchanges.options']) || $app['amqp.exchanges.options'] = [];
+        isset($app['amqp.queues.options'])    || $app['amqp.queues.options']    = [];
     }
 
     public function register(Application $app)
@@ -67,11 +69,14 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
 
                 $exchanges["default"] = $app->share(
                     function () use ($app) {
-                        return new Exchange("", $app["amqp.chan"], [    ]);
+                        return new Exchange("", $app["amqp.chan"], []);
                     }
                 );
 
                 foreach ($app['amqp.exchanges.options'] as $name => $options) {
+                    if ($name == 'default') {
+                        throw new \Exception("'default' is a reserved Exchange. You can't override it.");
+                    }
                     $exchanges[$name] = $app->share(
                         function () use ($app, $name, $options) {
                             $channel = (isset($options["channel"])) ? $options["channel"] : "default";
@@ -90,11 +95,14 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
 
                 $queues[""] = $app->share(
                     function () use ($app) {
-                        return new Exchange("", $app["amqp.chan"], [    ]);
+                        return new Queue("", $app["amqp.exchanges"]["default"], $app["amqp.exchanges"]["default"]->getChannel());
                     }
                 );
 
                 foreach ($app['amqp.queues.options'] as $name => $options) {
+                    if ($name == "") {
+                        throw new \Exception("Unamed queue is a reserved Queue. You can't override it.");
+                    }
                     $queues[$name] = $app->share(
                         function () use ($app, $name, $options) {
                             $exchange = (isset($options["exchange"])) ? $options["exchange"] : "default";

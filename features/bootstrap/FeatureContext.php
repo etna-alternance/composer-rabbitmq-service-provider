@@ -133,6 +133,29 @@ class FeatureContext extends BehatContext
         $this->channel->queue_bind($this->tmp_queue, $exchange);
     }
 
+     /**
+     * @Given /^que "([^"]*)" est (un exchange|une queue) réservé$/
+     */
+    public function queEstUnTrucReserve($name, $type)
+    {
+        try {
+            $type = $type == 'un exchange' ? "amqp.exchanges" : "amqp.queues";
+            $this->app[$type][$name]->getChannel();
+        } catch (Exception $e) {
+            $this->exception = $e->getMessage();
+        }
+    }
+
+    /**
+     * @Given /^je devrais avoir une exception "([^"]*)"$/
+     */
+    public function jeDevraisAvoirUneException($exception)
+    {
+        if ($exception != $this->exception) {
+            throw new Exception("Expected: '{$exception}'; got: '{$this->exception}'");
+        }
+    }
+
     /**
      * @Given /^j\'envoie un message "(\w+)" dans l\'exchange "(\w+)"$/
      */

@@ -23,8 +23,8 @@
         "bin-dir": "bin"
     },
     "autoload": {
-        "psr-0": {
-            "ETNA\\Silex\\Provider\\RabbitMQ": "src"
+        "psr-4": {
+            "ETNA\\Silex\\Provider\\RabbitMQ\\": "src"
         }
     },
     "extra": {

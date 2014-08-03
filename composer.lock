@@ -1,9 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
     ],
-    "hash": "6ca046a4d387a39ecd1b530573908e5e",
+    "hash": "b9a1796f3c27e5dbacbd2ebc8ae2c315",
     "packages": [
         {
             "name": "pimple/pimple",
@@ -664,21 +665,22 @@
         },
         {
             "name": "etna/composer-behat-utils",
-            "version": "v0.1.1",
+            "version": "v0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/etna-alternance/composer-behat-utils.git",
-                "reference": "59836b22b9a8b0356d0f81dd5a27d901ee339688"
+                "reference": "1a6a6ad51dab866a105eb580da9e1e7b3a8fba96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/etna-alternance/composer-behat-utils/zipball/59836b22b9a8b0356d0f81dd5a27d901ee339688",
-                "reference": "59836b22b9a8b0356d0f81dd5a27d901ee339688",
+                "url": "https://api.github.com/repos/etna-alternance/composer-behat-utils/zipball/1a6a6ad51dab866a105eb580da9e1e7b3a8fba96",
+                "reference": "1a6a6ad51dab866a105eb580da9e1e7b3a8fba96",
                 "shasum": ""
             },
             "require": {
                 "behat/behat": "2.x@stable",
                 "gquemener/behat-analysis-extension": "~1.0",
+                "php": ">=5.5",
                 "phpunit/php-code-coverage": "2.0.*@dev",
                 "phpunit/phpcov": "2.0.*@dev"
             },
@@ -689,8 +691,8 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "ETNA\\FeatureContext": "src"
+                "psr-4": {
+                    "ETNA\\FeatureContext\\": "src"
                 }
             },
             "license": [
@@ -709,10 +711,10 @@
                 "utils"
             ],
             "support": {
-                "source": "https://github.com/etna-alternance/composer-behat-utils/tree/v0.1.1",
+                "source": "https://github.com/etna-alternance/composer-behat-utils/tree/v0.1.2",
                 "issues": "https://github.com/etna-alternance/composer-behat-utils/issues"
             },
-            "time": "2014-07-24 10:06:57"
+            "time": "2014-08-03 08:50:56"
         },
         {
             "name": "gquemener/behat-analysis-extension",
@@ -1907,8 +1909,9 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": [],
+    "prefer-stable": false,
     "platform": {
-        "php": ">=5.4"
+        "php": ">=5.5"
     },
     "platform-dev": []
 }

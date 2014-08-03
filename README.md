@@ -1,4 +1,8 @@
-composer-rabbitmq-service-provider [![Build Status](http://drone.etna-alternance.net/github.com/etna-alternance/composer-rabbitmq-service-provider/status.svg?branch=master)](http://drone.etna-alternance.net/github.com/etna-alternance/composer-rabbitmq-service-provider)
+composer-rabbitmq-service-provider
+==================================
+
+[![Build Status](http://drone.etna-alternance.net/github.com/etna-alternance/composer-rabbitmq-service-provider/status.svg?branch=master)](http://drone.etna-alternance.net/github.com/etna-alternance/composer-rabbitmq-service-provider)
+[![Dependency Status](https://www.versioneye.com/user/projects/53dde6d68e78abc191000017/badge.svg)](https://www.versioneye.com/user/projects/53dde6d68e78abc191000017)
 
 ###Procédure d'installation pour composer-rabbitmq-service-provider
 

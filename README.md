@@ -1,19 +1,26 @@
-composer-rabbitmq-service-provider
-==================================
+rabbitmq-service-provider
+=========================
 
 [![Build Status](http://drone.etna-alternance.net/github.com/etna-alternance/composer-rabbitmq-service-provider/status.svg?branch=master)](http://drone.etna-alternance.net/github.com/etna-alternance/composer-rabbitmq-service-provider)
 [![Dependency Status](https://www.versioneye.com/user/projects/53dde6d68e78abc191000017/badge.svg)](https://www.versioneye.com/user/projects/53dde6d68e78abc191000017)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/etna-alternance/composer-rabbitmq-service-provider/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/etna-alternance/composer-rabbitmq-service-provider/?branch=master)
 
-###Procédure d'installation pour composer-rabbitmq-service-provider
+Installation
+------------
 
-Après clone du dépot, se mettre à la racine et :
+Modifier `composer.json` :
 
- * composer install
- * Si le dossier Tmp/keys n'existe pas, creer le dossier Tmp et le dossier keys
- * faire un chmod -R 777 sur tmp
-
-Pour que les tests fonctionnent, il faut :
-
- * rabbitmq lancé
-
-C'est prêt, servez-vous !
+```
+{
+    // ...
+    "require": {
+        "etna/rabbitmq-service-provider": "~0.1"
+    },
+    "repositories": [
+       {
+           "type": "composer",
+           "url": "http://blu-composer.herokuapp.com"
+       }
+   ]
+}
+```

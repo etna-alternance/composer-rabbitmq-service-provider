@@ -24,3 +24,4 @@ Modifier `composer.json` :
    ]
 }
 ```
+La version 2.6.0 de videlalvaro/php-amqplib génère des erreurs et bloque les jobs trop gros par conséquent on reste sur la version 2.5.2

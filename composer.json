@@ -13,7 +13,7 @@
     "require": {
         "php": ">=5.5",
         "silex/silex": "1.x",
-        "videlalvaro/php-amqplib": "2.x"
+        "videlalvaro/php-amqplib": "2.5.x"
     },
     "require-dev": {
         "behat/behat": "2.x",

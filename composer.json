@@ -12,8 +12,10 @@
     ],
     "require": {
         "php": ">=5.5",
-        "silex/silex": "1.x",
-        "videlalvaro/php-amqplib": "2.6.x"
+        "silex/silex": "~2.0@dev",
+        "videlalvaro/php-amqplib": "2.x",
+        "oldsound/rabbitmq-bundle": "~1.8",
+        "etna/silex-console": "2.x"
     },
     "require-dev": {
         "behat/behat": "2.x",

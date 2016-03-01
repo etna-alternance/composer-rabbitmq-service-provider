@@ -72,7 +72,7 @@ class RabbitServiceProvider implements ServiceProviderInterface
                     $options["user"],
                     $options["password"],
                     $options["vhost"],
-                    [ "verify_peer" => false ]
+                    $options["connection_opt"]
                 );
 
                 $connections[$name] = $connection;

@@ -13,7 +13,6 @@
     "require": {
         "php": ">=5.5",
         "silex/silex": "~2.0@dev",
-        "videlalvaro/php-amqplib": "2.x",
         "oldsound/rabbitmq-bundle": "~1.8",
         "etna/silex-console": "2.x"
     },

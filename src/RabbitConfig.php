@@ -15,8 +15,10 @@ class RabbitConfig implements ServiceProviderInterface
     public function __construct($rmq_config = null)
     {
         $rmq_config = $rmq_config ?: [];
-        $this->rmq_config['exchanges'] = isset($rmq_config['exchanges']) ? $rmq_config['exchanges'] : [];
-        $this->rmq_config['queues']    = isset($rmq_config['queues'])    ? $rmq_config['queues']    : [];
+
+        $this->rmq_config['exchanges']   = isset($rmq_config['exchanges'])   ? $rmq_config['exchanges']   : [];
+        $this->rmq_config['queues']      = isset($rmq_config['queues'])      ? $rmq_config['queues']      : [];
+        $this->rmq_config['connections'] = isset($rmq_config['connections']) ? $rmq_config['connections'] : [];
     }
 
     /**
@@ -50,18 +52,33 @@ class RabbitConfig implements ServiceProviderInterface
             }
         }
 
-        // Set la connection
-        $rabbit_config = [
-            "rabbit.connections" => [
-                "default"  => [
-                    "host"     => $config["host"],
-                    "port"     => $config["port"],
-                    "user"     => $config["user"],
-                    "password" => $config["pass"],
-                    "vhost"    => $rmq_vhost,
-                    "ssl"      => "testing" !== $app["application_env"],
+        $connections = [
+            "default" => [
+                "connection_opt" => [
+                    "verify_peer" => true,
+                    "heartbeat" => 30
                 ]
             ]
+        ];
+
+        // Set la connection
+        $rabbit_config = [
+            "rabbit.connections" => array_replace_recursive(
+                [
+                    "default"  => [
+                        "host"     => $config["host"],
+                        "port"     => $config["port"],
+                        "user"     => $config["user"],
+                        "password" => $config["pass"],
+                        "vhost"    => $rmq_vhost,
+                        "ssl"      => "testing" !== $app["application_env"],
+                        "connection_opt"  => [
+                            "verify_peer" => true
+                        ]
+                    ]
+                ],
+                $this->rmq_config['connections']
+            );
         ];
 
         // Ajoute les producers

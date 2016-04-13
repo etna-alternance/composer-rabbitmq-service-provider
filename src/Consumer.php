@@ -2,11 +2,11 @@
 
 namespace ETNA\Silex\Provider\RabbitMQ;
 
+use Saxulum\Console\Command\AbstractPimpleCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Saxulum\Console\Command\AbstractPimpleCommand;
 
 class Consumer extends AbstractPimpleCommand
 {
@@ -54,6 +54,9 @@ class Consumer extends AbstractPimpleCommand
         $this->consumer->consume($this->amount);
     }
 
+    /**
+     * @param InputInterface $input
+     */
     protected function getConsumerInstance($input)
     {
         $app = $this->container;

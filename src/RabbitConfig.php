@@ -2,7 +2,6 @@
 
 namespace ETNA\Silex\Provider\RabbitMQ;
 
-use Silex\Application;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 

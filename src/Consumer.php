@@ -28,7 +28,7 @@ class Consumer extends AbstractPimpleCommand
      * @param InputInterface  $input  An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      *
-     * @return integer 0 if everything went fine, or an error code
+     * @return integer|null 0 if everything went fine, or an error code
      *
      * @throws \InvalidArgumentException When the number of messages to consume is less than 0
      * @throws \BadFunctionCallException When the pcntl is not installed and option -s is true
@@ -47,7 +47,11 @@ class Consumer extends AbstractPimpleCommand
 
         $this->consumer = $this->getConsumerInstance($input);
 
-        if (!is_null($input->getOption('memory-limit')) && ctype_digit((string)$input->getOption('memory-limit')) && $input->getOption('memory-limit') > 0) {
+        if (
+            !is_null($input->getOption('memory-limit')) &&
+            ctype_digit((string)$input->getOption('memory-limit')) &&
+            $input->getOption('memory-limit') > 0
+        ) {
             $this->consumer->setMemoryLimit($input->getOption('memory-limit'));
         }
         $this->consumer->setRoutingKey($input->getOption('route'));

@@ -52,6 +52,9 @@ class RabbitServiceProvider implements ServiceProviderInterface
         return $app['rabbit.connection'][$connection_name];
     }
 
+    /**
+     * @param Container $app
+     */
     private function loadConnections($app)
     {
         $app['rabbit.connection'] = function ($app) {
@@ -82,6 +85,9 @@ class RabbitServiceProvider implements ServiceProviderInterface
         };
     }
 
+    /**
+     * @param Container $app
+     */
     private function loadProducers($app)
     {
         $app['rabbit.producer'] = function ($app) {
@@ -112,6 +118,9 @@ class RabbitServiceProvider implements ServiceProviderInterface
         };
     }
 
+    /**
+     * @param Container $app
+     */
     private function loadConsumers($app)
     {
         $app['rabbit.consumer'] = function ($app) {
@@ -150,6 +159,9 @@ class RabbitServiceProvider implements ServiceProviderInterface
         };
     }
 
+    /**
+     * @param Container $app
+     */
     private function loadAnonymousConsumers($app)
     {
         $app['rabbit.anonymous_consumer'] = function ($app) {
@@ -171,6 +183,9 @@ class RabbitServiceProvider implements ServiceProviderInterface
         };
     }
 
+    /**
+     * @param Container $app
+     */
     private function loadMultipleConsumers($app)
     {
         $app['rabbit.multiple_consumer'] = function ($app) {
@@ -209,6 +224,9 @@ class RabbitServiceProvider implements ServiceProviderInterface
 
     }
 
+    /**
+     * @param Container $app
+     */
     private function loadRpcClients($app)
     {
         $app['rabbit.rpc_client'] = function ($app) {
@@ -232,6 +250,9 @@ class RabbitServiceProvider implements ServiceProviderInterface
         };
     }
 
+    /**
+     * @param Container $app
+     */
     private function loadRpcServers($app)
     {
         $app['rabbit.rpc_server'] = function ($app) {
@@ -259,6 +280,5 @@ class RabbitServiceProvider implements ServiceProviderInterface
 
             return $servers;
         };
-
     }
 }

@@ -6,9 +6,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use ETNA\Silex\Provider\Console\SilexCommand;
+use Saxulum\Console\Command\AbstractPimpleCommand;
 
-class Consumer extends SilexCommand
+class Consumer extends AbstractPimpleCommand
 {
     protected function configure()
     {
@@ -56,7 +56,7 @@ class Consumer extends SilexCommand
 
     protected function getConsumerInstance($input)
     {
-        $app = $this->getSilexApplication();
+        $app = $this->container;
         return $app['rabbit.consumer'][$input->getArgument('name')];
     }
 }

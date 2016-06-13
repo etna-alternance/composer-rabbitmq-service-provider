@@ -75,7 +75,11 @@ class RabbitServiceProvider implements ServiceProviderInterface
                     $options["user"],
                     $options["password"],
                     $options["vhost"],
-                    $options["connection_opt"]
+                    $options["connection_opt"],
+                    [
+                        'read_write_timeout' => 60,
+                        'heartbeat'          => 30
+                    ]
                 );
 
                 $connections[$name] = $connection;

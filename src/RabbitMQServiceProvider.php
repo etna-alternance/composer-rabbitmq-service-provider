@@ -43,7 +43,11 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
                                 $options["user"],
                                 $options["password"],
                                 $options["vhost"],
-                                [ 'verify_peer' => false ]
+                                [ 'verify_peer' => false ],
+                                [
+                                    'read_write_timeout' => 60,
+                                    'heartbeat'          => 30
+                                ]
                             ];
 
                             $reflection = new \ReflectionClass($amqp_class);

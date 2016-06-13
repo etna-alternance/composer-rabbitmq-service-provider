@@ -16,7 +16,7 @@ require __DIR__ . "/../../vendor/autoload.php";
 //   require_once 'PHPUnit/Framework/Assert/Functions.php';
 //
 
-use ETNA\Silex\Provider\RabbitMQ\RabbitMQServiceProvider;
+use ETNA\Silex\Provider\RabbitMQ\RabbitServiceProvider;
 use Silex\Application;
 
 /**
@@ -45,7 +45,7 @@ class FeatureContext extends BehatContext
     public function uneApplicationSilex()
     {
         $this->app = new Application();
-        $this->app->register(new RabbitMQServiceProvider());
+        $this->app->register(new RabbitServiceProvider());
     }
 
     /**

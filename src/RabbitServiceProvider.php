@@ -64,18 +64,34 @@ class RabbitServiceProvider implements ServiceProviderInterface
 
             $connections = [];
             foreach ($app["rabbit.connections"] as $name => $options) {
-                $options    = $app["rabbit.connections"][$name];
-                $amqp_class = (isset($options["ssl"]) && true === $options["ssl"]) ?
-                    "PhpAmqpLib\Connection\AMQPSSLConnection" :
-                    "PhpAmqpLib\Connection\AMQPConnection";
-
-                $connection = new $amqp_class(
+                $amqp_class = "PhpAmqpLib\Connection\AMQPConnection";
+                $amqp_args  = [
                     $options["host"],
                     $options["port"],
                     $options["user"],
                     $options["password"],
-                    $options["vhost"],
-                    $options["connection_opt"]
+                    $options["vhost"]
+                ];
+
+                if (isset($options["ssl"]) && true === $options["ssl"]) {
+                    $amqp_class = "PhpAmqpLib\Connection\AMQPSSLConnection";
+                    $amqp_args = array_merge(
+                        $amqp_args,
+                        [
+                            isset($options["ssl_options"]) ? $options["ssl_options"] : ['verify_peer' => false],
+                            isset($options["options"]) ? $options["options"] : ['read_write_timeout' => 60,'heartbeat' => 30]
+                        ]
+                    );
+                }
+
+                $reflection = new \ReflectionClass($amqp_class);
+                $connection = $reflection->newInstanceArgs($amqp_args);
+
+                register_shutdown_function(
+                    function ($connection) {
+                        $connection->close();
+                    },
+                    $connection
                 );
 
                 $connections[$name] = $connection;

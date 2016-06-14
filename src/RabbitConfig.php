@@ -51,28 +51,21 @@ class RabbitConfig implements ServiceProviderInterface
             }
         }
 
-        $connections = [
-            "default" => [
-                "connection_opt" => [
-                    "verify_peer" => true,
-                    "heartbeat" => 30
-                ]
-            ]
-        ];
-
         // Set la connection
         $rabbit_config = [
             "rabbit.connections" => array_replace_recursive(
                 [
                     "default"  => [
-                        "host"     => $config["host"],
-                        "port"     => $config["port"],
-                        "user"     => $config["user"],
-                        "password" => $config["pass"],
-                        "vhost"    => $rmq_vhost,
-                        "ssl"      => "testing" !== $app["application_env"],
-                        "connection_opt"  => [
-                            "verify_peer" => true
+                        "host"        => $config["host"],
+                        "port"        => $config["port"],
+                        "user"        => $config["user"],
+                        "password"    => $config["pass"],
+                        "vhost"       => $rmq_vhost,
+                        "ssl"         => in_array($app['application_env'], ['production', 'development']),
+                        "ssl_options" => ["verify_peer" => false],
+                        "options"     => [
+                            'read_write_timeout' => 60,
+                            'heartbeat'          => 30
                         ]
                     ]
                 ],

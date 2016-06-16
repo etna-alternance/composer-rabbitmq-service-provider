@@ -1,4 +1,44 @@
-#behat.yml
+# behat.yml
+default:
+    autoload:
+        '': %paths.base%/vendor/etna/composer-behat-utils/src/contexts
+    suites:
+        default:
+            paths:
+                - %paths.base%/Tests/Functional/features
+            contexts:
+                - ETNA\FeatureContext\RabbitContext
+                - ETNA\FeatureContext\MainContext
+                - TestContext\FeatureContext
+    formatters:
+        progress:
+            decorated:           true
+            verbose:             false
+            time:                true
+            language:            fr
+            output_path:         null
+            multiline_arguments: true
+ci:
+    suites:
+        default:
+            contexts:
+                - ETNA\FeatureContext\CoverageContext:
+                    coverage_path: /tmp/behat/coverage
+                    whitelist:
+                        - app
+                    blacklist:
+                        - vendor
+                        - bin
+                        - tmp
+                        - Tests
+                - ETNA\FeatureContext\RabbitContext
+                - ETNA\FeatureContext\MainContext
+                - TestContext\FeatureContext
+wip:
+    suites:
+        default:
+            filters:
+                tags: '@wip'
 default:
     formatter:
         name:                  progress

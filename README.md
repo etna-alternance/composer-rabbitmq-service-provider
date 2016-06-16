@@ -32,15 +32,15 @@ Dans la conf (EtnaConfig.php)
 $this->rabbitmq_config = [
     'connections' => [
         "my_connection"  => [
-            "host"     => 'rabbitmq.etna-alternance.net',
-            "port"     => 5671,
-            "user"     => 'user',
-            "password" => 'pass',
-            "vhost"    => 'my_vhost',
-            "ssl"      => 'true',
-            "connection_opt"  => [
-                "verify_peer" => true,
-                "heartbeat"   => 30
+            "host"        => 'rabbitmq.etna-alternance.net',
+            "port"        => 5671,
+            "user"        => 'user',
+            "password"    => 'pass',
+            "vhost"       => 'my_vhost',
+            "ssl"         => 'true',
+            "ssl_options" => ["verify_peer" => true].
+            "options"     => [
+                'heartbeat' => 30
             ]
         ]
     ],

@@ -1,0 +1,14 @@
+[
+    {
+        "name":"job_1",
+        "batch_size": 3
+    },
+    {
+        "name":"job_2",
+        "batch_size": 3
+    },
+    {
+        "name":"job_3",
+        "batch_size": 3
+    }
+]

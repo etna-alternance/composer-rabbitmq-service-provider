@@ -2,18 +2,18 @@
 
 namespace ETNA\Silex\Provider\RabbitMQ;
 
-use Pimple\ServiceProviderInterface;
-use Pimple\Container;
-use Symfony\Component\Routing\Generator\UrlGenerator;
-use OldSound\RabbitMqBundle\RabbitMq\Producer;
-use OldSound\RabbitMqBundle\RabbitMq\Consumer;
 use OldSound\RabbitMqBundle\RabbitMq\AnonConsumer;
+use OldSound\RabbitMqBundle\RabbitMq\BaseConsumer;
+use OldSound\RabbitMqBundle\RabbitMq\Consumer;
 use OldSound\RabbitMqBundle\RabbitMq\MultipleConsumer;
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use OldSound\RabbitMqBundle\RabbitMq\RpcClient;
 use OldSound\RabbitMqBundle\RabbitMq\RpcServer;
 use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Connection\AMQPLazyConnection;
 use PhpAmqpLib\Connection\AMQPSSLConnection;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 
 /**
  * Code repris de fiunchinho/rabbitmq-service-provider en attendant la compatibilité
@@ -64,18 +64,36 @@ class RabbitServiceProvider implements ServiceProviderInterface
 
             $connections = [];
             foreach ($app["rabbit.connections"] as $name => $options) {
-                $options    = $app["rabbit.connections"][$name];
-                $amqp_class = (isset($options["ssl"]) && true === $options["ssl"]) ?
-                    "PhpAmqpLib\Connection\AMQPSSLConnection" :
-                    "PhpAmqpLib\Connection\AMQPConnection";
-
-                $connection = new $amqp_class(
+                $amqp_class = "PhpAmqpLib\Connection\AMQPConnection";
+                $amqp_args  = [
                     $options["host"],
                     $options["port"],
                     $options["user"],
                     $options["password"],
-                    $options["vhost"],
-                    $options["connection_opt"]
+                    $options["vhost"]
+                ];
+
+                if (isset($options["ssl"]) && true === $options["ssl"]) {
+                    $amqp_class = "PhpAmqpLib\Connection\AMQPSSLConnection";
+                    $amqp_args  = array_merge(
+                        $amqp_args,
+                        [
+                            isset($options["ssl_options"]) ? $options["ssl_options"] : ['verify_peer' => false],
+                            isset($options["options"]) ?
+                                $options["options"] :
+                                ['read_write_timeout' => 60,'heartbeat' => 30]
+                        ]
+                    );
+                }
+
+                $reflection = new \ReflectionClass($amqp_class);
+                $connection = $reflection->newInstanceArgs($amqp_args);
+
+                register_shutdown_function(
+                    function ($connection) {
+                        $connection->close();
+                    },
+                    $connection
                 );
 
                 $connections[$name] = $connection;
@@ -135,16 +153,9 @@ class RabbitServiceProvider implements ServiceProviderInterface
                 $consumer->setExchangeOptions($options['exchange_options']);
                 $consumer->setQueueOptions($options['queue_options']);
                 $consumer->setCallback(array($app[$options['callback']], 'execute'));
+                $consumer = $this->setQosOptions($consumer, $options);
 
-                if (array_key_exists('qos_options', $options)) {
-                    $consumer->setQosOptions(
-                        $options['qos_options']['prefetch_size'],
-                        $options['qos_options']['prefetch_count'],
-                        $options['qos_options']['global']
-                    );
-                }
-
-                if (array_key_exists('qos_options', $options)) {
+                if (array_key_exists('idle_timeout', $options)) {
                     $consumer->setIdleTimeout($options['idle_timeout']);
                 }
 
@@ -199,16 +210,9 @@ class RabbitServiceProvider implements ServiceProviderInterface
                 $consumer = new MultipleConsumer($connection);
                 $consumer->setExchangeOptions($options['exchange_options']);
                 $consumer->setQueues($options['queues']);
+                $consumer = $this->setQosOptions($consumer, $options);
 
-                if (array_key_exists('qos_options', $options)) {
-                    $consumer->setQosOptions(
-                        $options['qos_options']['prefetch_size'],
-                        $options['qos_options']['prefetch_count'],
-                        $options['qos_options']['global']
-                    );
-                }
-
-                if (array_key_exists('qos_options', $options)) {
+                if (array_key_exists('idle_timeout', $options)) {
                     $consumer->setIdleTimeout($options['idle_timeout']);
                 }
 
@@ -266,19 +270,24 @@ class RabbitServiceProvider implements ServiceProviderInterface
                 $server = new RpcServer($connection);
                 $server->initServer($name);
                 $server->setCallback(array($options['callback'], 'execute'));
-
-                if (array_key_exists('qos_options', $options)) {
-                    $server->setQosOptions(
-                        $options['qos_options']['prefetch_size'],
-                        $options['qos_options']['prefetch_count'],
-                        $options['qos_options']['global']
-                    );
-                }
-
+                $server         = $this->setQosOptions($server, $options);
                 $servers[$name] = $server;
             }
 
             return $servers;
         };
+    }
+
+    private function setQosOptions(BaseConsumer $consumer, $options)
+    {
+        if (array_key_exists('qos_options', $options)) {
+            $consumer->setQosOptions(
+                $options['qos_options']['prefetch_size'],
+                $options['qos_options']['prefetch_count'],
+                $options['qos_options']['global']
+            );
+        }
+
+        return $consumer;
     }
 }

@@ -1,13 +1,14 @@
 image: etna/drone-php
 env:
   - APPLICATION_ENV=drone
+  - RABBITMQ_URL=http://guest:guest@localhost:5672
   - RABBITMQ_VHOST="/test-behat"
 script:
   - mkdir -p tmp/keys
   - openssl genrsa  -out tmp/keys/private.key 2048
   - openssl rsa -in tmp/keys/private.key -pubout -out tmp/keys/public.key
   - composer install --dev --prefer-source
-  - bin/behat -f progress
+  - composer behat
 services:
   - rabbitmq
 notify:

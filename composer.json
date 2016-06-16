@@ -16,7 +16,8 @@
         "oldsound/rabbitmq-bundle": "~1.8"
     },
     "require-dev": {
-        "behat/behat": "2.x",
+        "behat/behat": "3.x",
+        "etna/composer-behat-utils": "2.x-dev",
         "saxulum/saxulum-console": "^3.1"
     },
     "config": {
@@ -24,7 +25,9 @@
     },
     "autoload": {
         "psr-4": {
-            "ETNA\\Silex\\Provider\\RabbitMQ\\": "src"
+            "ETNA\\Silex\\Provider\\RabbitMQ\\": "src",
+            "TestRabbitMq\\": "app",
+            "TestContext\\": "Tests/Functional/Context"
         }
     },
     "extra": {
@@ -32,10 +35,24 @@
             "dev-master": "1.0-dev"
         }
     },
+    "scripts": {
+        "test": "behat",
+        "behat": "behat"
+    },
     "repositories": [
-       {
-           "type": "composer",
-           "url":  "https://blu-composer.herokuapp.com"
-       }
-   ]
+        {
+            "type": "composer",
+            "url": "https://blu-composer.herokuapp.com"
+        }
+    ],
+   "config": {
+        "process-timeout": 2000,
+        "preferred-install": "dist",
+        "github-protocols": [
+            "https"
+        ],
+        "github-oauth": {
+            "github.com": "301a680723ba39506886274c54766e95fda2e052"
+        }
+    }
 }

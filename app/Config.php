@@ -2,7 +2,6 @@
 
 namespace TestRabbitMq;
 
-use Silex\Application;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -36,10 +35,10 @@ class Config implements ServiceProviderInterface
      *
      * If development environment, set xdebug to display all the things
      *
-     * @param Application $app Silex Application
+     * @param Container $app Pimple Container
      *
      */
-    private function registerEnvironmentParams(Application $app)
+    private function registerEnvironmentParams(Container $app)
     {
         $app['application_name']      = 'test_rabbitmq';
         $app['application_env']       = 'testing';
@@ -53,5 +52,4 @@ class Config implements ServiceProviderInterface
         error_reporting(E_ALL);
         $app["debug"] = true;
     }
-
 }

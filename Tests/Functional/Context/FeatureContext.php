@@ -3,8 +3,8 @@
 namespace TestContext;
 
 use Behat\Behat\Context\SnippetAcceptingContext;
-use PhpAmqpLib\Message\AMQPMessage;
 use ETNA\FeatureContext\BaseContext;
+use PhpAmqpLib\Message\AMQPMessage;
 
 /**
  * Features context
@@ -36,7 +36,6 @@ class FeatureContext extends BaseContext implements SnippetAcceptingContext
      */
     public static function flushMessages()
     {
-        var_dump("LOLILOUL");
         self::$silex_app['ConsumerA']->flushMessages();
         self::$silex_app['rabbit.consumer']['consumer_a']->purge();
         self::$silex_app['rabbit.consumer']['consumer_a']->resetConsumed();
@@ -62,7 +61,9 @@ class FeatureContext extends BaseContext implements SnippetAcceptingContext
         $connection = $this->laConnectionDevraitEtreDefinie($conn);
         if (false === $connection instanceof $class_name) {
             $actual_class = get_class($connection);
-            throw new \Exception("Expected connection {$conn} to be instance of {$class_name}. Instance of {$actual_class} instead.");
+            throw new \Exception(
+                "Expected connection {$conn} to be instance of {$class_name}. Instance of {$actual_class} instead."
+            );
         }
     }
 
@@ -85,8 +86,10 @@ class FeatureContext extends BaseContext implements SnippetAcceptingContext
     {
         $producer = $this->leProducerDevraitEtreDefini($producer_name);
         if (false === $producer instanceof $class_name) {
-            $actual_class = get_class($producer);
-            throw new \Exception("Expected producer {$producer_name} to be instance of {$class_name}. Instance of {$actual_class} instead.");
+            $class = get_class($producer);
+            throw new \Exception(
+                "Expected producer {$producer_name} to be instance of {$class_name}. Instance of {$class} instead."
+            );
         }
     }
 
@@ -124,8 +127,10 @@ class FeatureContext extends BaseContext implements SnippetAcceptingContext
     {
         $consumer = $this->leConsumerDevraitEtreDefini($consumer_name);
         if (false === $consumer instanceof $class_name) {
-            $actual_class = get_class($consumer);
-            throw new \Exception("Expected consumer {$consumer_name} to be instance of {$class_name}. Instance of {$actual_class} instead.");
+            $class = get_class($consumer);
+            throw new \Exception(
+                "Expected consumer {$consumer_name} to be instance of {$class_name}. Instance of {$class} instead."
+            );
         }
     }
 
@@ -161,8 +166,11 @@ class FeatureContext extends BaseContext implements SnippetAcceptingContext
     /**
      * @Then le consumer :consumer_name devrait avoir consommé :nb_messages message avec le corps contenu dans :result_file
      */
-    public function leConsumerDevraitAvoirConsommeMessageAvecLeCorpsContenuDans($consumer_name, $nb_messages, $result_file)
-    {
+    public function leConsumerDevraitAvoirConsommeMessageAvecLeCorpsContenuDans(
+        $consumer_name,
+        $nb_messages,
+        $result_file
+    ) {
         $body = file_get_contents($this->results_path . $result_file);
         if (!$body) {
             throw new \Exception("File not found : {$this->results_path}${result_file}");

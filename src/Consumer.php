@@ -41,7 +41,7 @@ class Consumer extends AbstractPimpleCommand
 
         $this->amount = $input->getOption('messages');
 
-        if (!is_int($this->amount) || 0 > $this->amount) {
+        if (0 > $this->amount) {
             throw new \InvalidArgumentException("The -m option should be null or greater than 0");
         }
 

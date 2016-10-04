@@ -41,7 +41,7 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
 
                             if (isset($options["ssl"]) && $options["ssl"] === true) {
                                 $amqp_class  = 'PhpAmqpLib\Connection\AMQPSSLConnection';
-                                $amqp_args[] = [ 'verify_peer' => false ];
+                                $amqp_args[] = [ 'verify_peer' => false, 'verify_peer_name' => false ];
                             } else {
                                 $amqp_class = 'PhpAmqpLib\Connection\AMQPConnection';
                             }

@@ -63,10 +63,7 @@ class RabbitConfig implements ServiceProviderInterface
                         "vhost"       => $rmq_vhost,
                         "ssl"         => in_array($app['application_env'], ['production', 'development']),
                         "ssl_options" => ["verify_peer" => false, "verify_peer_name" => false],
-                        "options"     => [
-                            'read_write_timeout' => 60,
-                            'heartbeat'          => 30
-                        ]
+                        "options"     => []
                     ]
                 ],
                 $this->rmq_config['connections']

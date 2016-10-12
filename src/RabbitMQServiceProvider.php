@@ -46,11 +46,6 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
                                 $amqp_class = 'PhpAmqpLib\Connection\AMQPConnection';
                             }
 
-                            $amqp_args[] = [
-                                'read_write_timeout' => 60,
-                                'heartbeat'          => 30
-                            ];
-
                             $reflection = new \ReflectionClass($amqp_class);
                             $connection = $reflection->newInstanceArgs($amqp_args);
 

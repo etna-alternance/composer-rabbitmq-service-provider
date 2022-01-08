@@ -51,8 +51,23 @@ class RabbitMQServiceProvider implements ServiceProviderInterface
 
                             $channel = $connection->channel();
                             register_shutdown_function(function ($channel, $connection) use ($name) {
-                                $channel->close();
-                                $connection->close();
+                                // Note: during testing, behat cleanups in ETNA\FeatureContext\RabbitMQ
+                                // (from repo composer-behat-util) will delete the rabbimq Vhost before
+                                // this cleanup function can be invoked. This causes the underlying tcp
+                                // connections to be closed. That is the reason these close() call are
+                                // wrapped in exception handling.
+                                try {
+                                    $channel->close();
+                                } catch(\Exception $e) {
+                                    error_log('exception caught and ignored while closing AMQP channel: '
+                                              . $e->getMessage());
+                                }
+                                try {
+                                    $connection->close();
+                                } catch(\Exception $e) {
+                                    error_log('exception caught and ignored while closing AMQP connection: '
+                                              . $e->getMessage());
+                                }
                             }, $channel, $connection);
                             return $channel;
                         }

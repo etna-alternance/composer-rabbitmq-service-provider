@@ -20,6 +20,24 @@ class RabbitConfig implements ServiceProviderInterface
         $this->rmq_config['connections'] = isset($rmq_config['connections']) ? $rmq_config['connections'] : [];
     }
 
+    // return True if the string value represent a "tru-ish" value.
+    private function coerce_to_bool(String $value, String $name)
+    {
+        switch (strtolower($value)) {
+        case "yes":
+        case "1":
+        case "true":
+            return true;
+        case "no":
+        case "0":
+        case "false":
+            return false;
+        default:
+            throw new \Exception("Cannot coerce value '{$value}' into a boolean for {$name}");
+            return false;
+        }
+    }
+    
     /**
      *
      * @{inherit doc}
@@ -32,6 +50,7 @@ class RabbitConfig implements ServiceProviderInterface
 
         $rmq_url   = getenv('RABBITMQ_URL');
         $rmq_vhost = getenv('RABBITMQ_VHOST');
+        $rmq_use_ssl = getenv('RABBITMQ_USE_SSL');
 
         if (false === $rmq_url) {
             throw new \Exception('RABBITMQ_URL is not defined');
@@ -41,6 +60,11 @@ class RabbitConfig implements ServiceProviderInterface
             throw new \Exception('RABBITMQ_VHOST is not defined');
         }
 
+        if (false === $rmq_use_ssl) {
+            throw new \Exception('RABBITMQ_USE_SSL is not defined');
+        }
+        $rmq_use_ssl = $this->coerce_to_bool($rmq_use_ssl, "RABBITMQ_USE_SSL");
+    
         $config        = parse_url($rmq_url);
         $rmq_producers = isset($app["rmq_producers"]) ? $app["rmq_producers"] : [];
         $rmq_consumers = isset($app["rmq_consumers"]) ? $app["rmq_consumers"] : [];
@@ -61,7 +85,7 @@ class RabbitConfig implements ServiceProviderInterface
                         "user"        => $config["user"],
                         "password"    => $config["pass"],
                         "vhost"       => $rmq_vhost,
-                        "ssl"         => in_array($app['application_env'], ['production', 'development']),
+                        "ssl"         => $rmq_use_ssl,
                         "ssl_options" => ["verify_peer" => false, "verify_peer_name" => false],
                         "options"     => []
                     ]
